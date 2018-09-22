@@ -15,12 +15,12 @@ class BibTexMagic():
 
     def __init__(self, pages_double_hyphened=True, latex_to_unicode=True, restrict_to_allowed=True):
         self.entries = []
+
+        self.converter = LatexToUni()
+
         self.pages_double_hyphened = pages_double_hyphened
         self.restrict_to_allowed = restrict_to_allowed
-
-        if latex_to_unicode:
-            self.latex_to_unicode = True
-            self.converter = LatexToUni()
+        self.latex_to_unicode = latex_to_unicode
 
     def parse_bib(self, filename):
         with open(filename) as bibfile:
@@ -72,10 +72,10 @@ class BibTexMagic():
 
                 field_name = entry_raw[field_start:field_name_end].strip()
 
-                field_val_start = entry_raw.find('{', field_name_end) + 1
-                field_val_end = entry_raw.find('},', field_val_start)
+                field_val_start = entry_raw.find('{', field_name_end)
+                field_val_end = field_val_start + self.get_parentheses(entry_raw[field_val_start:], True)[0]
 
-                field_parsed = self.parse_field(field_name, entry_raw[field_val_start:field_val_end])
+                field_parsed = self.parse_field(field_name, entry_raw[(field_val_start+1):field_val_end])
 
                 field_val = field_parsed
 
@@ -106,12 +106,57 @@ class BibTexMagic():
 
         author_list = field_value.split(" and ")
 
-        #TBA: Parse von, Jr, etc.. Make sure the names are
-        #in the A.B. Surname, {prefix} format
+        for i, author in enumerate(author_list):
+            author_list[i] = self._parse_author_name(author)
 
         return author_list
 
+    def _parse_author_name(self, author):
+        #For comma-separated entries
+        if "," in author:
+            parts = [part.strip() for part in author.split(",")]
+
+            last = parts[0]
+            first = parts[-1]
+            jr = ""
+
+            if len(parts) > 3:
+                jr = parts[1]
+
+        else:
+            parts = [part.strip() for part in author.split()]
+            lower = None
+
+            for i, part in enumerate(parts):
+                if part[0].islower():
+                    lower = i
+                    break
+
+            if lower is not None:
+                last = " ".join(parts[lower:])
+                first = " ".join(parts[:lower])
+                jr = ""
+            else:
+                last = parts[-1]
+                first = " ".join(parts[:-1])
+                jr = ""
+
+        return [last, jr, first]
+
+
+
+        #Surname first
+        if "," in words[0]:
+            names = [name[0].upper() + "." for name in words[1:]]
+            return words[0][:-1] + ", " + "".join(names)
+        else:
+            names = [name[0].upper() + "." for name in words[:-1]]
+            return words[-1] + ", " + "".join(names)
+
     def parse_field_title(self, field_value):
+        if self.latex_to_unicode:
+            field_value = self.converter.lat_to_uni(field_value)
+
         par = self.get_parentheses(field_value)
 
         to_return = ""
@@ -129,11 +174,10 @@ class BibTexMagic():
     def parse_field_pages(self, field_value):
         if self.pages_double_hyphened:
             return re.sub("-{1,2}", "--", field_value)
+        else:
+            return field_value.replace("--", "-")
 
-        return field_value
-
-
-    def get_parentheses(self, s):
+    def get_parentheses(self, s, stop_on_closing=False):
         to_return = {}
         pstack = []
 
@@ -144,6 +188,10 @@ class BibTexMagic():
                 if not pstack:
                     raise IndexError("No matching opening parenthesis for " + str(i))
                 to_return[pstack.pop()] = i
+
+                #If all brackets closed, return?
+                if stop_on_closing and not pstack:
+                    return to_return
 
         if pstack:
             raise IndexError("No matching closing parenthesis for " + str(pstack.pop()))

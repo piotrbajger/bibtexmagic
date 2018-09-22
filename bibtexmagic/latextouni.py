@@ -22,19 +22,21 @@ class LatexToUni():
     def lat_to_uni(self, s):
         """Replaces LaTeX macros with their unicode equivalents"""
 
-        #Necessary to replace escaped backslashes, so that '\\xi' becomes '\\\\xi' to match the keys.
         return self.pattern_lat2uni.sub(
             lambda x: self.lat2uni[self._string_to_re(x.group())],
             s)
 
     def _string_to_re(self, s):
+        """Convertrs from a Python string representation to a corresponding regex"""
         return s.replace('\\', '\\\\').replace('^', '\\^')
 
     def _re_to_string(self, s):
+        """Converts a regex to a corresponding Python string"""
         return s.replace('\\^', '^').replace('\\', '\\\\')
 
 
-	#Source: https://gist.github.com/beniwohli/798549
+    #Source: https://gist.github.com/beniwohli/798549
+    #This matches LaTeX macros with their corresponding regular expressions.
     _UNI2LAT = {
 		u"\u00AD": "\\\\-",
 		u"\u005F": "\\\\_",
