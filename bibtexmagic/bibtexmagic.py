@@ -50,8 +50,8 @@ class BibTexMagic():
         self.entries = []
 
         self.options = BibTexParserOptions(pages_double_hyphened,
-                                           latex_to_unicode
-                                          )
+                                           latex_to_unicode)
+
 
     def parse_bib(self, filename):
         """

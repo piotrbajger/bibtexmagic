@@ -1,0 +1,6 @@
+py_35nose:
+    image: python:3.5.3
+    script:
+     - apt-get update -q -y
+     - nosetests -v --nocapcture
+
