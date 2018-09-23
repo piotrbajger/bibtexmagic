@@ -5,15 +5,36 @@ import json
 
 from latextouni import LatexToUni
 
-
 class BibTexMagic():
+    """
+    Parser main class for BibTexMagic.
+    Static variables:
+        ALLOWED_ENTRIES: a list of supported BibTex entries.
+        ALLOWED_FIELDS: a list of allowed BibTex fields.
+    """
+
     ALLOWED_ENTRIES = ['article', 'book']
+
     ALLOWED_FIELDS = ['address', 'annote', 'author', 'booktitle', 'chapter',
         'crossref', 'edition', 'editor', 'file', 'howpublished', 'institution', 'journal',
         'key', 'month', 'note', 'number', 'organization', 'pages', 'publisher',
         'school', 'series', 'title', 'type', 'volume', 'year']
 
+
     def __init__(self, pages_double_hyphened=True, latex_to_unicode=True, restrict_to_allowed=True):
+        """
+        Initialise a new parser with a set of options.
+
+        Keyword arguments:
+        pages_double_hyphened -- if True, two hyphens are used to set page
+            numbers. If False, one is used instead. Default: True
+        latex_to_unicode -- if True, LaTeX macros are converted to
+            unicode characters (e.g. \'{o} becomes ó). If False, the macro
+            strings are retained as is. Default: True.
+        restrict_to_allowed -- if True, only fields from the ALLOWED_FIELDS
+            list are parsed. If False, all fields are parsed. Default: True.
+        """
+
         self.entries = []
 
         self.converter = LatexToUni()
@@ -23,36 +44,54 @@ class BibTexMagic():
         self.latex_to_unicode = latex_to_unicode
 
     def parse_bib(self, filename):
+        """
+        Parses a BibTeX file. The file is then stored internally
+        in the entries member variable.
+
+        Positional arguments:
+        filename -- file name to be parsed.
+        """
+
         with open(filename) as bibfile:
             bib_raw = bibfile.read()
 
-        found_prev = bib_raw.find('@')
+        entries_unparsed = bib_raw.split("@")
 
         warnings.simplefilter('always')
 
-        while found_prev > -1:
-            found_next = bib_raw.find('@', found_prev+1)
-
-            entry_raw = (bib_raw[found_prev:found_next])
-
+        for unparsed in entries_unparsed:
             with warnings.catch_warnings(record=False):
-                entry = self.parse_entry(entry_raw)
-
-            found_prev = found_next
+                entry = self.parse_entry(unparsed)
 
             if entry is not None:
                 self.entries.append(entry)
 
 
     def parse_entry(self, entry_raw):
+        """
+        Parses a single bibtex entry. Returns a dictionary
+        containing entry type (book/article/etc.) and all
+        the supported fields. Returns None if entry not
+        supported.
+
+        Positional arguments:
+        entry_raw -- text containing a BibTeX entry
+            (starting with @)
+        """
+
+        #Ignore comments
+        if entry_raw[0] == "%":
+            return None
+
         end_type = entry_raw.find('{')
-        entry_type = entry_raw[1:end_type].lower()
+        entry_type = entry_raw[:end_type].lower()
 
         if self.restrict_to_allowed or entry_type not in self.ALLOWED_ENTRIES:
             warnings.warn('Entry type {} not supported.'.format(entry_type))
             return None
 
         entry = {}
+        entry['type'] = entry_type
 
         if entry_type == 'article':
             end_key = entry_raw.find(',', end_type+1)
@@ -90,6 +129,10 @@ class BibTexMagic():
 
 
     def parse_field(self, field_name, field_value):
+        """
+        Parses a single BibTeX field. Calls a field-specific
+        parser when required (e.g. author, title).
+        """
         if field_name == "author":
             return self.parse_field_author(field_value)
         elif field_name == "title":
@@ -101,6 +144,20 @@ class BibTexMagic():
 
 
     def parse_field_author(self, field_value):
+        """
+        Accepts a string containing author names. Names
+        are assumed to be separated by " and ". Supports
+        the names in the following forms:
+            von Last, Jr, First
+            First von Last
+
+        Positional arguments:
+            field_value -- string with and-separated author names.
+
+        Return value:
+        A list of triplets of the form (von Last, Jr, First).
+        """
+
         if self.latex_to_unicode:
             field_value = self.converter.lat_to_uni(field_value)
 
@@ -112,6 +169,18 @@ class BibTexMagic():
         return author_list
 
     def _parse_author_name(self, author):
+        """
+        Parses single author name.
+
+        Positional arguments:
+        author -- string containing author name.
+            von Last, Jr, First, or
+            First von Last
+
+        Return value:
+        A triplet of the form (von Last, Jr, First).
+        """
+
         #For comma-separated entries
         if "," in author:
             parts = [part.strip() for part in author.split(",")]
@@ -154,6 +223,16 @@ class BibTexMagic():
             return words[-1] + ", " + "".join(names)
 
     def parse_field_title(self, field_value):
+        """
+        Parses the title field while respecting BibTex {Blocks}.
+        LaTeX macros are parsed depending on the latex_to_unicode option.
+
+        Positional arguments:
+        field_value -- string containing the title.
+
+        Return value:
+        String containing a parsed title.
+        """
         if self.latex_to_unicode:
             field_value = self.converter.lat_to_uni(field_value)
 
@@ -172,12 +251,37 @@ class BibTexMagic():
         return to_return
 
     def parse_field_pages(self, field_value):
+        """
+        Parses the pages field.
+        Result is hyphened according to the pages_double_hyphened option.
+
+        Positional arguments:
+        field_value -- string containing the pages field value.
+
+        Return value:
+        A string containing the the parsed pages field.
+        """
         if self.pages_double_hyphened:
             return re.sub("-{1,2}", "--", field_value)
         else:
             return field_value.replace("--", "-")
 
     def get_parentheses(self, s, stop_on_closing=False):
+        """
+        Looks up opening/closing parentheses pairs in a string.
+
+        Positional arguments:
+        s -- input string.
+
+        Keyword arguments:
+        stop_on_closing -- if True, parsing stops upon reaching
+            a closing parenthesis of the first opening one. If False,
+            the parser continues until the end of the string.
+
+        Return value:
+        A dictionary of parentheses positions in a string containing
+            entries of the form "opening: closing".
+        """
         to_return = {}
         pstack = []
 
@@ -198,8 +302,12 @@ class BibTexMagic():
 
         return to_return
 
-    def convert_to_utf(self, s):
-        pass
+    def to_json(self):
+        if not entries:
+            warnings.warn("A BibTeX file has not been parsed yet.")
+            return None
+        else:
+            json.dumps(entries)
 
 #Keep it here for now for testing purposes
 if __name__ == "__main__":
