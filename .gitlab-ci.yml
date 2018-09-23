@@ -3,5 +3,5 @@ py_35nose:
     script:
      - apt-get update -q -y
      - pip install -r requirements.txt
-     - nosetests -v --nocapcture
+     - nosetests -v --nocapture
 
