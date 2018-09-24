@@ -2,16 +2,16 @@ import re
 import warnings
 
 from .helper import get_parentheses
-from .fields.field import BibField
+from .fields.field import BibTexField
 
 class BibTexEntry():
-    def __init__(self, entry_raw, parser_options):
+    def __init__(self, parser_options, entry_raw=None):
         """
         Initialises an entry from BibTex string.
 
         Arguments:
-        entry_raw: a BibTex string to be parsed.
         parser_options: an instance of BibTexParserOptions
+        entry_raw: a BibTex string to be parsed.
         """
 
         self.entry_type = None
@@ -19,7 +19,8 @@ class BibTexEntry():
 
         self.fields = []
 
-        self.parse_entry(entry_raw, parser_options)
+        if entry_raw is not None:
+            self.parse_entry(entry_raw, parser_options)
 
 
     def parse_entry(self, entry_raw, parser_options):
@@ -55,14 +56,25 @@ class BibTexEntry():
 
             field_raw = entry_raw[(field_val_start+1):field_val_end]
 
-            field = BibField.create_field(field_name, field_raw, parser_options)
+            field = BibTexField.create_field(field_name, field_raw, parser_options)
 
             prev_end = field_val_end
 
             if field is not None:
                 self.fields.append(field)
-            else:
-                warnings.warn('Field {} not supported'.format(field_name))
+
+
+    def to_bibtex(self):
+        bibtex = "@{}{{{},\n".format(
+            self.entry_type, self.key)
+
+        for field in self.fields:
+            bibtex += "\t{} = {{{}}},\n".format(field.name, field.value)
+
+        bibtex += "}"
+
+        return bibtex
+
 
     def __str__(self):
         to_return = "{} ({})\n".format(self.key, self.entry_type)
@@ -70,3 +82,5 @@ class BibTexEntry():
             to_return += "\t" + str(field) + "\n"
 
         return to_return
+
+

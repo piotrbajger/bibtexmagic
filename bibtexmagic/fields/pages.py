@@ -1,9 +1,9 @@
 import re
 
-from bibtexmagic.fields.field import BibField
-from bibtexmagic.bibtexmagic import BibTexMagic
+from .field import BibTexField
+from ..bibtexmagic import BibTexMagic
 
-class PagesBibField(BibField):
+class PagesBibTexField(BibTexField):
 
     def __init__(self, field_raw, parser_options):
         self.name = "pages"

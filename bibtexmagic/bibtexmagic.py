@@ -3,9 +3,9 @@ import sys
 import re
 import json
 
-from bibtexmagic.latextouni import LatexToUni
-from bibtexmagic.fields.field import BibField
-from bibtexmagic.entry import BibTexEntry
+from .latextouni import LatexToUni
+from .fields.field import BibTexField
+from .entry import BibTexEntry
 
 class BibTexParserOptions():
     """Stores common settings for the parser."""
@@ -87,11 +87,3 @@ class BibTexMagic():
         else:
             for entry in self.entries:
                 print(str(entry) + "\n")
-
-#Keep it here for now for testing purposes
-if __name__ == "__main__":
-    parser = BibTexMagic()
-
-    parser.parse_bib('bibtexmagic/bib.bib')
-
-    parser.to_text()

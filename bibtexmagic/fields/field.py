@@ -1,6 +1,8 @@
+import bibtexmagic
+
 from importlib import import_module
 
-class BibField():
+class BibTexField():
     """
     Represents a generic BibTtex field. Base class for fields
     requiring special parsing.
@@ -26,21 +28,29 @@ class BibField():
         parser_options -- an instance of BibTexParserOptions.
 
         Return value:
-        A concrete instance derived from BibField object. None if
+        A concrete instance derived from BibTexField object. None if
         field field_name is not implemented.
         """
+        if field_name not in BibTexField._ALLOWED_FIELDS:
+            raise UserWarning("Field {} not supported.".format(field_name))
+            return None
+
         field = None
-        class_name = field_name.capitalize() + 'BibField'
+        class_name = field_name.capitalize() + 'BibTexField'
 
         try:
-            field_module = import_module('bibtexmagic.fields.' + field_name.lower())
+            field_module = import_module(
+                '.bibtexmagic.fields.' + field_name.lower(), 'bibtexmagic')
 
             field = getattr(field_module, class_name)(field_raw, parser_options)
         except ImportError:
-            if field_name.lower() in BibField._ALLOWED_FIELDS:
-                field = BibField(field_name, field_raw)
+            if field_name.lower() in BibTexField._ALLOWED_FIELDS:
+                field = BibTexField(field_name, field_raw)
 
-        return field
+        if field is None:
+            return BibTexField(field_name, field_raw)
+        else:
+            return field
 
 
     def __init__(self, field_name, field_raw):

@@ -1,8 +1,8 @@
-from bibtexmagic.fields.field import BibField
-from bibtexmagic.bibtexmagic import BibTexMagic
-from bibtexmagic.helper import get_parentheses
+from .field import BibTexField
+from ..bibtexmagic import BibTexMagic
+from ..helper import get_parentheses
 
-class TitleBibField(BibField):
+class TitleBibTexField(BibTexField):
 
     def __init__(self, field_raw, parser_options):
         self.name = "title"

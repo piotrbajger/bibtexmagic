@@ -1,7 +1,7 @@
-from bibtexmagic.fields.field import BibField
-from bibtexmagic.bibtexmagic import BibTexMagic
+from .field import BibTexField
+from ..bibtexmagic import BibTexMagic
 
-class AuthorBibField(BibField):
+class AuthorBibTexField(BibTexField):
 
     def __init__(self, field_raw, parser_options):
         self.name = "author"
@@ -54,7 +54,7 @@ class AuthorBibField(BibField):
             first = parts[-1]
             jr = ""
 
-            if len(parts) > 3:
+            if len(parts) > 2:
                 jr = parts[1]
 
         else:
