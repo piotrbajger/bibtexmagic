@@ -32,6 +32,10 @@ class BibTexMagic():
     def latex_to_unicode(text):
         return BibTexMagic.converter.lat_to_uni(text)
 
+    @staticmethod
+    def unicode_to_latex(text):
+        return BibTexMagic.converter.uni_to_lat(text)
+
     def __init__(self,
                  pages_double_hyphened=True,
                  latex_to_unicode=True,

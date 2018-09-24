@@ -30,24 +30,5 @@ class TestTitleField(unittest.TestCase):
             f = field.BibTexField.create_field(
                 "title", raw, self.parser_options)
 
-            self.assertTrue(f.name, "title")
-            self.assertTrue(f.value, parsed)
-
-    def test_parse_field_unicode(self):
-        title_raw = "title with macr\'{o}"
-        parsed_no_uni = "title with macr" + u"00F3"
-        parsed_uni = "title with macr" + u"00F3"
-
-        #Should not parse unicode
-        f = field.BibTexField.create_field(
-            "title", title_raw, self.parser_options)
-
-        self.assertTrue(f.value, parsed_no_uni)
-
-        #Now should start parsing unicode
-        self.parser_options.latex_to_unicode = True
-
-        f = field.BibTexField.create_field(
-            "title", title_raw, self.parser_options)
-
-        self.assertTrue(f.value, parsed_uni)
+            self.assertEqual(f.name, "title")
+            self.assertEqual(f.value, parsed)

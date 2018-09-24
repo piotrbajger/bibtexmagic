@@ -27,8 +27,8 @@ class TestTitleField(unittest.TestCase):
         f = field.BibTexField.create_field(
             "pages", value, self.parser_options)
 
-        self.assertTrue(f.name, "pages")
-        self.assertTrue(f.value, value)
+        self.assertEqual(f.name, "pages")
+        self.assertEqual(f.value, value)
 
     def test_parse_field_unicode(self):
         pages_raw = "1-1905"
@@ -47,4 +47,4 @@ class TestTitleField(unittest.TestCase):
         f = field.BibTexField.create_field(
             "pages", pages_raw, self.parser_options)
 
-        self.assertTrue(f.value, parsed_dbl)
+        self.assertEqual(f.value, parsed_dbl)

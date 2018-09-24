@@ -9,8 +9,7 @@ class TitleBibTexField(BibTexField):
         self.value = self.parse_field(field_raw, parser_options)
 
     def parse_field(self, field_raw, parser_options):
-        if parser_options.latex_to_unicode:
-            field_raw = BibTexMagic.latex_to_unicode(field_raw)
+        field_raw = BibTexMagic.latex_to_unicode(field_raw)
 
         par = get_parentheses(field_raw)
 
@@ -23,5 +22,8 @@ class TitleBibTexField(BibTexField):
 
         to_return += field_raw[pos:].lower()
         to_return = to_return[0].upper() + to_return[1:]
+
+        if not parser_options.latex_to_unicode:
+            to_return = BibTexMagic.unicode_to_latex(to_return)
 
         return to_return

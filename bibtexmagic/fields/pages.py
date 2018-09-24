@@ -11,8 +11,7 @@ class PagesBibTexField(BibTexField):
 
     def parse_field(self, field_raw, parser_options):
         if parser_options.pages_double_hyphened:
-            return re.sub("[\s]+-{1,2}[\s]+", "--", field_raw)
+            return re.sub("-{1,2}", "--", field_raw)
         else:
-            field_raw.replace("--", "-")
-            return re.sub("[\s]+-[\s]+", "-", field_raw)
+            return field_raw.replace("--", "-")
 

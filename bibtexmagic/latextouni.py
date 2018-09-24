@@ -17,7 +17,8 @@ class LatexToUni():
 
     def uni_to_lat(self, s):
         """Replaces unicode characters with LaTeX macros."""
-        return self.pattern_uni2lat.sub(lambda x: self._UNI2LAT[x.group()], s)
+        return self.pattern_uni2lat.sub(lambda x:
+                                        self._UNI2LAT[x.group()], s)
 
     def lat_to_uni(self, s):
         """Replaces LaTeX macros with their unicode equivalents"""
