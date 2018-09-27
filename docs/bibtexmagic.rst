@@ -6,15 +6,39 @@ Subpackages
 
 .. toctree::
 
-    bibtexmagic.bibtexmagic
+    bibtexmagic.fields
 
 Submodules
 ----------
 
-bibtexmagic.setup module
+bibtexmagic.bibtexmagic module
+------------------------------
+
+.. automodule:: bibtexmagic.bibtexmagic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+bibtexmagic.entry module
 ------------------------
 
-.. automodule:: bibtexmagic.setup
+.. automodule:: bibtexmagic.entry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+bibtexmagic.helper module
+-------------------------
+
+.. automodule:: bibtexmagic.helper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+bibtexmagic.latextouni module
+-----------------------------
+
+.. automodule:: bibtexmagic.latextouni
     :members:
     :undoc-members:
     :show-inheritance:

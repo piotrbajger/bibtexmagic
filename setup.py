@@ -5,7 +5,7 @@ setup(
     version='0.1alpha',
     author='Piotr Bajger',
     author_email='piotr.bajger@hotmail.com',
-    packages=['bibtexmagic'],
+    packages=['bibtexmagic', 'bibtexmagic.fields'],
     url='https://gitlab.com/piotrbajger/bibtexmagic',
     license='LICENSE.txt',
     description='BibTeX parser in Python.',
