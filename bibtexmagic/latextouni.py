@@ -3,11 +3,23 @@ import re
 
 class LatexToUni():
     """
-        This class is responsible for converting from LaTeX macros to unicode characters
-        and back. It is used to implement diacritic characters in names, greek letters
-        in paper titles, etc.
+    Responsible for converting from LaTeX macros to unicode characters
+    and back. It is used to implement diacritic characters in names,
+    greek letters in paper titles, etc.
+
     """
     def __init__(self):
+        """Initialises the LatexToUni class.
+
+        Based on the _UNI2LAT dictionary, constructs a dictionary
+        with keys and values reversed to allow parsing in both
+        directions.
+
+        Static members:
+            _UNI2LAT (dict): A dictionary defining a mapping between
+                unicode characters and their LaTeX macros representations.
+
+        """
         self.pattern_uni2lat = re.compile(r'|'.join(self._UNI2LAT.keys()))
         self.lat2uni = {v: k for k, v in self._UNI2LAT.items()}
 
@@ -16,13 +28,27 @@ class LatexToUni():
         )
 
     def uni_to_lat(self, s):
-        """Replaces unicode characters with LaTeX macros."""
+        """Replaces unicode characters with LaTeX macros.
+
+        Args:
+            s (str): String to be parsed.
+
+        Returns:
+            str: Parsed string.
+
+        """
         return self.pattern_uni2lat.sub(lambda x:
                                         self._UNI2LAT[x.group()], s)
 
     def lat_to_uni(self, s):
-        """Replaces LaTeX macros with their unicode equivalents"""
+        """Replaces LaTeX macros with their unicode equivalents
+        Args:
+            s (str): String to be parsed.
 
+        Returns:
+            str: Parsed string.
+
+        """
         return self.pattern_lat2uni.sub(
             lambda x: self.lat2uni[self._string_to_re(x.group())],
             s)

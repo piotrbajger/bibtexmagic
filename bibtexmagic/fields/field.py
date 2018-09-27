@@ -7,8 +7,9 @@ class BibTexField():
     Represents a generic BibTtex field. Base class for fields
     requiring special parsing.
 
-    Variables:
-        _ALLOWED_FIELDS -- a list of allowed field names.
+    Static members:
+        _ALLOWED_FIELDS (list): A list of allowed field names.
+
     """
 
     _ALLOWED_FIELDS = ['address', 'annote', 'author', 'booktitle', 'chapter',
@@ -19,17 +20,22 @@ class BibTexField():
 
     @staticmethod
     def create_field(field_name, field_raw, parser_options):
-        """
+        """BibTexField factory.
+
         Parses raw field text and creates an appropriate object.
 
-        Positional arguments:
-        field_name -- name of the field (e.g. Author or Journal)
-        field_raw -- an unparsed string containing the field value.
-        parser_options -- an instance of BibTexParserOptions.
+        Args:
+            field_name (str): Name of the field (e.g. Author or Journal)
+            field_raw (str): An unparsed string containing the field value.
+            parser_options: An instance of BibTexParserOptions.
 
-        Return value:
-        A concrete instance derived from BibTexField object. None if
-        field field_name is not implemented.
+        Returns:
+            (BibTexField): A concrete instance derived from BibTexField object. None if
+                field field_name is not implemented.
+
+        Raises:
+            UserWarning if field is not allowed.
+
         """
         if field_name not in BibTexField._ALLOWED_FIELDS:
             raise UserWarning("Field {} not supported.".format(field_name))
@@ -54,12 +60,16 @@ class BibTexField():
 
 
     def __init__(self, field_name, field_raw):
+        """Initialises the object.
+
+        Args:
+            field_name (str): The name of the field, e.g. 'author'.
+            field_raw (str): Unparsed field value as seen in a BibTeX file.
+
+        """
         self.name = field_name
         self.value = field_raw
 
     def parse_field(self, field_raw, parser_options):
         """Field-specific parser."""
         return field_raw
-
-    def __str__(self):
-        return "{} = {},".format(self.name, self.value)

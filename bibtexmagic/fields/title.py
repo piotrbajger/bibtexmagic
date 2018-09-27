@@ -3,12 +3,33 @@ from ..bibtexmagic import BibTexMagic
 from ..helper import get_parentheses
 
 class TitleBibTexField(BibTexField):
+    """Initialises and parses the field."""
 
     def __init__(self, field_raw, parser_options):
+        """Initialises and parses the field.
+
+        Args:
+            field_raw (str): Raw BibTex string as seen in a BibTeX file.
+            parser_options: An instance of BibTexParserOptions.
+
+        """
         self.name = "title"
         self.value = self.parse_field(field_raw, parser_options)
 
     def parse_field(self, field_raw, parser_options):
+        """Parses the field.
+
+        Respectes capital letters in {} brackets and parses LaTeX
+        macros dependeing on 'parser_options'.
+
+        Args:
+            field_raw (str): Raw BibTex string as seen in a BibTeX file.
+            parser_options: An instance of BibTexParserOptions.
+
+        Returns:
+            A parsed title.
+
+        """
         field_raw = BibTexMagic.latex_to_unicode(field_raw)
 
         par = get_parentheses(field_raw)

@@ -2,26 +2,35 @@ from .field import BibTexField
 from ..bibtexmagic import BibTexMagic
 
 class AuthorBibTexField(BibTexField):
+    """Class representing the Author field."""
 
     def __init__(self, field_raw, parser_options):
+        """Initialises and parses the field.
+
+        Args:
+            field_raw (str): Raw BibTex string as seen in a BibTeX file.
+            parser_options: An instance of BibTexParserOptions.
+
+        """
         self.name = "author"
         self.value = self.parse_field(field_raw, parser_options)
 
     def parse_field(self, field_raw, parser_options):
-        """
-        Accepts a string containing author names. Names
-        are assumed to be separated by " and ". Supports
-        the names in the following forms:
+        """Parses the field.
+
+        Accepts a string containing author names. Names are assumed to be
+        separated by " and ". Supports the names in the following forms:
             von Last, Jr, First
             First von Last
 
-        Positional arguments:
-            field_value -- string with and-separated author names.
+        Args:
+            field_raw (str): Raw BibTex string as seen in a BibTeX file.
+            parser_options: An instance of BibTexParserOptions.
 
-        Return value:
-        A list of triplets of the form (von Last, Jr, First).
+        Returns:
+            list: A list of triplets of the form (von Last, Jr, First).
+
         """
-
         if parser_options.latex_to_unicode:
             field_raw = BibTexMagic.latex_to_unicode(field_raw)
 
@@ -34,18 +43,17 @@ class AuthorBibTexField(BibTexField):
 
 
     def _parse_author_name(self, author):
+        """Parses a single author name.
+
+        Args:
+            author (str): String containing author name.
+                Assumes following formats: 'von Last, Jr, First', or
+                'First von Last'.
+
+        Returns:
+            A triplet of the form (von Last, Jr, First).
+
         """
-        Parses single author name.
-
-        Positional arguments:
-        author -- string containing author name.
-            von Last, Jr, First, or
-            First von Last
-
-        Return value:
-        A triplet of the form (von Last, Jr, First).
-        """
-
         #For comma-separated entries
         if "," in author:
             parts = [part.strip() for part in author.split(",")]
@@ -76,6 +84,3 @@ class AuthorBibTexField(BibTexField):
                 jr = ""
 
         return [last, jr, first]
-
-
-

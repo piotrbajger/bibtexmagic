@@ -1,18 +1,19 @@
 def get_parentheses(s, stop_on_closing=False):
-    """
-    Looks up opening/closing parentheses pairs in a string.
+    """Looks up opening/closing parentheses pairs in a string.
 
-    Positional arguments:
-    s -- input string.
+    Args:
+        s (str): input string.
+        stop_on_closing (bool): If True, parsing stops upon reaching
+            a closing parenthesis of the first opening one. If False,
+            the parser continues until the end of the string.
 
-    Keyword arguments:
-    stop_on_closing -- if True, parsing stops upon reaching
-        a closing parenthesis of the first opening one. If False,
-        the parser continues until the end of the string.
+    Returns:
+        dict: A dictionary of parentheses positions in a string containing
+            entries of the form "opening: closing".
 
-    Return value:
-    A dictionary of parentheses positions in a string containing
-        entries of the form "opening: closing".
+    Raises:
+        IndexError if the parentheses do not match.
+
     """
     to_return = {}
     pstack = []

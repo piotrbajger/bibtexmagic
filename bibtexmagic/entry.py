@@ -5,13 +5,14 @@ from .helper import get_parentheses
 from .fields.field import BibTexField
 
 class BibTexEntry():
+    """Internal class storing a single BibTeX entry like 'Article' or 'Book'."""
     def __init__(self, parser_options, entry_raw=None):
         """
         Initialises an entry from BibTex string.
 
-        Arguments:
-        parser_options: an instance of BibTexParserOptions
-        entry_raw: a BibTex string to be parsed.
+        Args:
+            parser_options: An instance of BibTexParserOptions.
+            entry_raw (str): A BibTex string to be parsed.
         """
 
         self.entry_type = None
@@ -25,12 +26,13 @@ class BibTexEntry():
 
     def parse_entry(self, entry_raw, parser_options):
         """
-        Does the actual parsing and fills the member variables in.
+        Does the actual parsing and fills in the 'fields' member variable.
 
-        Positional arguments:
-        entry_raw -- text containing a BibTeX entry
+        Args:
+            entry_raw (str): Text containing a BibTeX entry.
+            parser_options: An instance of BibTexParserOptions.
+
         """
-
         end_type = entry_raw.find('{')
         self.entry_type = entry_raw[:end_type].lower()
 
@@ -65,6 +67,11 @@ class BibTexEntry():
 
 
     def to_bibtex(self):
+        """
+        Returns:
+            A string with the BibTeX representation of the entry.
+
+        """
         bibtex = "@{}{{{},\n".format(
             self.entry_type, self.key)
 
@@ -74,13 +81,3 @@ class BibTexEntry():
         bibtex += "}"
 
         return bibtex
-
-
-    def __str__(self):
-        to_return = "{} ({})\n".format(self.key, self.entry_type)
-        for field in self.fields:
-            to_return += "\t" + str(field) + "\n"
-
-        return to_return
-
-

@@ -2,3 +2,8 @@ __pycache__
 *.pyc
 *.bib
 *.swp
+
+#Sphinx
+docs/*
+!docs/*.rst
+!docs/*.py
