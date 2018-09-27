@@ -16,8 +16,8 @@
 import os
 import sys
 
-#Absolute path for now
-sys.path.insert(0, '/home/larskormak/Workdir/python')
+sys.path.insert(0, 
+                os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # -- Project information -----------------------------------------------------
 
