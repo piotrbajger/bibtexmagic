@@ -113,16 +113,34 @@ class BibTexMagic():
             #Ignore comments
             if unparsed[0] == "%": continue
 
-            entry = BibTexEntry(unparsed, self.options)
+            entry = BibTexEntry(self.options, unparsed)
 
             if entry is not None:
                 self.entries.append(entry)
 
+    def to_json(self):
+        """Returns the Bibliography as a JSON string."""
+        jsoned = '{\"bibliography\": {\n'
+        for entry in self.entries:
+            jsoned += entry.to_json()
 
-    def to_text(self):
-        """Prints a parsed file into a more readable format."""
-        if not self.entries:
-            warnings.warn("A BibTeX file has not been parsed yet.")
+        #Remove trailing comma
+        jsoned = jsoned[:-2] + "\n"
+
+        jsoned += r'}}'
+
+        return jsoned
+
+    def to_bibtex(self, options=None):
+        """Returns the bibliography as a BibTeX string."""
+        bibtexed = ""
+        for entry in self.entries:
+            bibtexed += "\n\n"
+            bibtexed += entry.to_bibtex()
+
+        if self.options.latex_to_unicode:
+            bibtexed = self.latex_to_unicode(bibtexed)
         else:
-            for entry in self.entries:
-                print(str(entry) + "\n")
+            bibtexed = self.unicode_to_latex(bibtexed)
+
+        return bibtexed

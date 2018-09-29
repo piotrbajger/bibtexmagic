@@ -6,6 +6,7 @@ from .fields.field import BibTexField
 
 class BibTexEntry():
     """Internal class storing a single BibTeX entry like 'Article' or 'Book'."""
+
     def __init__(self, parser_options, entry_raw=None):
         """
         Initialises an entry from BibTex string.
@@ -81,3 +82,30 @@ class BibTexEntry():
         bibtex += "}"
 
         return bibtex
+
+    def to_json(self):
+        """Returns the entry as a JSON string."""
+        jsoned = "\t\"{}\": {{\n".format(self.key)
+        jsoned += '\t\t\"type\": \"{}\",\n'.format(self.entry_type)
+        jsoned += '\t\t\"fields\": {\n'
+
+        for field in self.fields:
+            jsoned += field.to_json()
+
+        #Remove trailing comma
+        jsoned = jsoned[:-2] + "\n"
+
+        jsoned += "\t\t}\n"
+
+        jsoned += "\t},\n"
+
+        return jsoned
+
+    def to_bibtex(self):
+        """Returns the entry as a BibTeX string."""
+        bibtexed = "@{}{{{},\n".format(self.entry_type, self.key)
+        for field in self.fields:
+            bibtexed += "\t" + field.to_bibtex() + ",\n"
+        bibtexed += "}"
+
+        return bibtexed

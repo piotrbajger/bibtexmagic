@@ -84,3 +84,37 @@ class AuthorBibTexField(BibTexField):
                 jr = ""
 
         return [last, jr, first]
+
+
+    def to_json(self):
+        """Returns the entry as a JSON string.
+
+        """
+        jsoned = "\t\t\t\"author\": [\n"
+
+        for author in self.value:
+            jsoned += "\t\t\t\t"
+            jsoned += "{{\"first\": \"{}\", ".format(author[0])
+            jsoned += "\"jr\": \"{}\", ".format(author[1])
+            jsoned += "\"last\": \"{}\"}},\n".format(author[2])
+
+        #Remove trailing comma
+        jsoned = jsoned[:-2] + "\n"
+        jsoned += "\t\t\t],\n"
+        return jsoned
+
+    def to_bibtex(self):
+        """Returns the author field as a BibTeX string."""
+        bibtexed = "author = {"
+        for author in self.value:
+            if author[1] != "":
+                bibtexed += "{}, {}, {} and ".format(*author)
+            else:
+                bibtexed += "{}, {} and ".format(author[0], author[2])
+
+        #Remove trailing ' and '.
+        bibtexed = bibtexed[:-5] + "}"
+
+        return bibtexed
+
+

@@ -1,6 +1,8 @@
+from importlib import import_module
+
 import bibtexmagic
 
-from importlib import import_module
+
 
 class BibTexField():
     """
@@ -73,3 +75,9 @@ class BibTexField():
     def parse_field(self, field_raw, parser_options):
         """Field-specific parser."""
         return field_raw
+
+    def to_json(self):
+        return "\t\t\t\"{}\": \"{}\",\n".format(self.name, self.value)
+
+    def to_bibtex(self):
+        return "{} = {{{}}}".format(self.name, self.value)
