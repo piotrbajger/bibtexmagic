@@ -3,7 +3,6 @@ import os
 import sys
 import json
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bibtexmagic.bibtexmagic.entry import BibTexEntry
 from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions

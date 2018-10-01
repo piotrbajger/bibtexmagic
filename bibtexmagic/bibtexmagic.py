@@ -129,9 +129,15 @@ class BibTexMagic():
 
         jsoned += r'}}'
 
+        if self.options.latex_to_unicode:
+            jsoned = self.latex_to_unicode(jsoned)
+        else:
+            jsoned  = self.unicode_to_latex(jsoned)
+
         return jsoned
 
-    def to_bibtex(self, options=None):
+
+    def to_bibtex(self):
         """Returns the bibliography as a BibTeX string."""
         bibtexed = ""
         for entry in self.entries:
