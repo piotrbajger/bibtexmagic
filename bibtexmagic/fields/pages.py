@@ -1,7 +1,7 @@
 import re
 
 from .field import BibTexField
-from ..bibtexmagic import BibTexMagic
+
 
 class PagesBibTexField(BibTexField):
     """Class representing a 'pages' BibTeX field."""
@@ -16,7 +16,6 @@ class PagesBibTexField(BibTexField):
         """
         self.name = "pages"
         self.value = self.parse_field(field_raw, parser_options)
-
 
     def parse_field(self, field_raw, parser_options):
         """Parses the field.
@@ -33,4 +32,3 @@ class PagesBibTexField(BibTexField):
             return re.sub("-{1,2}", "--", field_raw)
         else:
             return field_raw.replace("--", "-")
-

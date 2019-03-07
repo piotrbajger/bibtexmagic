@@ -1,6 +1,4 @@
 import unittest
-import os
-import sys
 
 from bibtexmagic.bibtexmagic.fields import author, field
 from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
@@ -16,9 +14,8 @@ class TestTitleField(unittest.TestCase):
         f1 = field.BibTexField.create_field(
                 "author", "Test McFace", self.parser_options)
 
-        #Tests correct type
+        # Tests correct type
         self.assertTrue(isinstance(f1, author.AuthorBibTexField))
-
 
     def test_parse_author_name(self):
         testauth = author.AuthorBibTexField("test test", self.parser_options)
@@ -41,23 +38,21 @@ class TestTitleField(unittest.TestCase):
             ["von Last", "Jr", "First1 First2"]
         ]
 
-
         for raw, parsed in zip(raw, expected):
             self.assertEqual(parsed, testauth._parse_author_name(raw))
-
 
     def test_parse_field_unicode(self):
         raw = "First La\\\'{s}t"
         parsed_no_uni = [["La\\\'{s}t", "", "First"]]
         parsed_uni = [["La\u015Bt", "", "First"]]
 
-        #Should not parse unicode
+        # Should not parse unicode
         f = field.BibTexField.create_field(
             "author", raw, self.parser_options)
 
         self.assertEqual(f.value, parsed_no_uni)
 
-        #Now should start parsing unicode
+        # Now should start parsing unicode
         self.parser_options.latex_to_unicode = True
 
         f = field.BibTexField.create_field(

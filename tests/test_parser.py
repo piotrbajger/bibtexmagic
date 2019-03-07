@@ -1,12 +1,9 @@
 import unittest
 import os
-import sys
 import json
 
-
-from bibtexmagic.bibtexmagic.entry import BibTexEntry
-from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
 from bibtexmagic.bibtexmagic.bibtexmagic import BibTexMagic
+
 
 class TestParser(unittest.TestCase):
     def setUp(self):
@@ -23,11 +20,12 @@ class TestParser(unittest.TestCase):
     def test_to_json(self):
         self.parser.parse_bib(self.fixture_file)
 
-        #Test if valid JSON string:
+        # Test if valid JSON string:
         try:
             json.loads(self.parser.to_json())
         except ValueError:
-            self.fail("BibTexMagic.to_json() did not return a valid JSON string!")
+            self.fail("BibTexMagic.to_json() did not return " +
+                      "a valid JSON string!")
 
     def test_to_bibtex(self):
         self.parser.parse_bib(self.fixture_file)
@@ -36,6 +34,6 @@ class TestParser(unittest.TestCase):
 
         bibtex_str = self.parser.to_bibtex()
 
-        #Test if correct number of entries.
+        # Test if correct number of entries.
         self.assertEqual(len(bibtex_str.split("\n\n@")),
                          len(self.parser.entries) + 1)

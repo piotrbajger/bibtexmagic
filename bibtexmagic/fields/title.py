@@ -2,6 +2,7 @@ from .field import BibTexField
 from ..bibtexmagic import BibTexMagic
 from ..helper import get_parentheses
 
+
 class TitleBibTexField(BibTexField):
     """Initialises and parses the field."""
 

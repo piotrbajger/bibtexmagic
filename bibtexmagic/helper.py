@@ -23,16 +23,14 @@ def get_parentheses(s, stop_on_closing=False):
             pstack.append(i)
         elif c == '}':
             if not pstack:
-                raise IndexError("No matching opening parenthesis for " + str(i))
+                raise IndexError("No matching opening for " + str(i))
             to_return[pstack.pop()] = i
 
-            #If all brackets closed, return?
+            # If all brackets closed, return?
             if stop_on_closing and not pstack:
                 return to_return
 
     if pstack:
-        raise IndexError("No matching closing parenthesis for " + str(pstack.pop()))
+        raise IndexError("No matching closing for " + str(pstack.pop()))
 
     return to_return
-
-

@@ -1,8 +1,5 @@
 from importlib import import_module
 
-import bibtexmagic
-
-
 
 class BibTexField():
     """
@@ -14,11 +11,12 @@ class BibTexField():
 
     """
 
-    _ALLOWED_FIELDS = ['address', 'annote', 'author', 'booktitle', 'chapter',
+    _ALLOWED_FIELDS = [
+        'address', 'annote', 'author', 'booktitle', 'chapter',
         'crossref', 'edition', 'editor', 'file', 'howpublished', 'institution',
         'journal', 'key', 'month', 'note', 'number', 'organization', 'pages',
-        'publisher', 'school', 'series', 'title', 'type', 'volume', 'year']
-
+        'publisher', 'school', 'series', 'title', 'type', 'volume', 'year'
+    ]
 
     @staticmethod
     def create_field(field_name, field_raw, parser_options):
@@ -32,8 +30,8 @@ class BibTexField():
             parser_options: An instance of BibTexParserOptions.
 
         Returns:
-            (BibTexField): A concrete instance derived from BibTexField object. None if
-                field field_name is not implemented.
+            (BibTexField): A concrete instance derived from BibTexField
+                object. None if field field_name is not implemented.
 
         Raises:
             UserWarning if field is not allowed.
@@ -50,7 +48,8 @@ class BibTexField():
             field_module = import_module(
                 '.bibtexmagic.fields.' + field_name.lower(), 'bibtexmagic')
 
-            field = getattr(field_module, class_name)(field_raw, parser_options)
+            field = getattr(field_module, class_name)(field_raw,
+                                                      parser_options)
         except ImportError:
             if field_name.lower() in BibTexField._ALLOWED_FIELDS:
                 field = BibTexField(field_name, field_raw)
@@ -59,7 +58,6 @@ class BibTexField():
             return BibTexField(field_name, field_raw)
         else:
             return field
-
 
     def __init__(self, field_name, field_raw):
         """Initialises the object.

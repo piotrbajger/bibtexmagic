@@ -1,6 +1,4 @@
 import unittest
-import os
-import sys
 
 from bibtexmagic.bibtexmagic.fields import pages, field
 from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
@@ -16,9 +14,8 @@ class TestTitleField(unittest.TestCase):
         f1 = field.BibTexField.create_field(
                 "pages", "1-1905", self.parser_options)
 
-        #Tests correct type
+        # Tests correct type
         self.assertTrue(isinstance(f1, pages.PagesBibTexField))
-
 
     def test_parse_field(self):
         value = "1-1905"
@@ -33,13 +30,13 @@ class TestTitleField(unittest.TestCase):
         parsed_sng = pages_raw
         parsed_dbl = pages_raw.replace("-", "--")
 
-        #Should not parse unicode
+        # Should not parse unicode
         f = field.BibTexField.create_field(
             "pages", pages_raw, self.parser_options)
 
         self.assertTrue(f.value, parsed_sng)
 
-        #Now should start parsing unicode
+        # Now should start parsing unicode
         self.parser_options.pages_double_hyphened = True
 
         f = field.BibTexField.create_field(

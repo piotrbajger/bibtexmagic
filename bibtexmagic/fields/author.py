@@ -1,6 +1,7 @@
 from .field import BibTexField
 from ..bibtexmagic import BibTexMagic
 
+
 class AuthorBibTexField(BibTexField):
     """Class representing the Author field."""
 
@@ -41,7 +42,6 @@ class AuthorBibTexField(BibTexField):
 
         return author_list
 
-
     def _parse_author_name(self, author):
         """Parses a single author name.
 
@@ -54,7 +54,7 @@ class AuthorBibTexField(BibTexField):
             A triplet of the form (von Last, Jr, First).
 
         """
-        #For comma-separated entries
+        # For comma-separated entries
         if "," in author:
             parts = [part.strip() for part in author.split(",")]
 
@@ -85,7 +85,6 @@ class AuthorBibTexField(BibTexField):
 
         return [last, jr, first]
 
-
     def to_json(self):
         """Returns the entry as a JSON string.
 
@@ -98,7 +97,7 @@ class AuthorBibTexField(BibTexField):
             jsoned += "\"jr\": \"{}\", ".format(author[1])
             jsoned += "\"last\": \"{}\"}},\n".format(author[2])
 
-        #Remove trailing comma
+        # Remove trailing comma
         jsoned = jsoned[:-2] + "\n"
         jsoned += "\t\t\t],\n"
         return jsoned
@@ -112,9 +111,7 @@ class AuthorBibTexField(BibTexField):
             else:
                 bibtexed += "{}, {} and ".format(author[0], author[2])
 
-        #Remove trailing ' and '.
+        # Remove trailing ' and '.
         bibtexed = bibtexed[:-5] + "}"
 
         return bibtexed
-
-

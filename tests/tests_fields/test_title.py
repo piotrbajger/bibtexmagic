@@ -1,6 +1,4 @@
 import unittest
-import os
-import sys
 
 from bibtexmagic.bibtexmagic.fields import title, field
 from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
@@ -16,9 +14,8 @@ class TestTitleField(unittest.TestCase):
         f1 = field.BibTexField.create_field(
                 "title", "simple title", self.parser_options)
 
-        #Tests correct type
+        # Tests correct type
         self.assertTrue(isinstance(f1, title.TitleBibTexField))
-
 
     def test_parse_field(self):
         titles_raw = ["simple title", "simple {TITLE}"]

@@ -1,11 +1,8 @@
 import warnings
-import sys
-import re
-import json
 
 from .latextouni import LatexToUni
-from .fields.field import BibTexField
 from .entry import BibTexEntry
+
 
 class BibTexParserOptions():
     """Stores common settings for the parser."""
@@ -54,7 +51,6 @@ class BibTexMagic():
         """
         return BibTexMagic.CONVERTER.lat_to_uni(text)
 
-
     @staticmethod
     def unicode_to_latex(text):
         """
@@ -70,7 +66,6 @@ class BibTexMagic():
         """
 
         return BibTexMagic.CONVERTER.uni_to_lat(text)
-
 
     def __init__(self,
                  pages_double_hyphened=True,
@@ -91,7 +86,6 @@ class BibTexMagic():
         self.options = BibTexParserOptions(pages_double_hyphened,
                                            latex_to_unicode)
 
-
     def parse_bib(self, filename):
         """
         Parses a BibTeX file. Parsed file is then available
@@ -110,8 +104,9 @@ class BibTexMagic():
         warnings.simplefilter('always')
 
         for unparsed in entries_unparsed:
-            #Ignore comments
-            if unparsed[0] == "%": continue
+            # Ignore comments
+            if unparsed[0] == "%":
+                continue
 
             entry = BibTexEntry(self.options, unparsed)
 
@@ -124,7 +119,7 @@ class BibTexMagic():
         for entry in self.entries:
             jsoned += entry.to_json()
 
-        #Remove trailing comma
+        # Remove trailing comma
         jsoned = jsoned[:-2] + "\n"
 
         jsoned += r'}}'
@@ -132,10 +127,9 @@ class BibTexMagic():
         if self.options.latex_to_unicode:
             jsoned = self.latex_to_unicode(jsoned)
         else:
-            jsoned  = self.unicode_to_latex(jsoned)
+            jsoned = self.unicode_to_latex(jsoned)
 
         return jsoned
-
 
     def to_bibtex(self):
         """Returns the bibliography as a BibTeX string."""
