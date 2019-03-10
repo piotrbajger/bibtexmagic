@@ -122,7 +122,7 @@ class BibTexMagic():
 
         """
         if type(filename_or_buffer) == str:
-            with open(filename) as bibfile:
+            with open(filename_or_buffer) as bibfile:
                 bib_raw = bibfile.read()
         else:
             try:

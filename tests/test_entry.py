@@ -32,13 +32,11 @@ class TestEntry(unittest.TestCase):
     def test_parse_entry(self):
         entry = BibTexEntry(self.parser_options)
 
-        # Should raise a warning due to an unsupported field name.
-        with self.assertRaises(UserWarning):
-            entry.parse_entry(self.test_entry, self.parser_options)
+        entry.parse_entry(self.test_entry, self.parser_options)
 
         self.assertEqual(entry.key, self.entry_key)
         self.assertEqual(entry.entry_type, self.entry_type)
-        self.assertEqual(len(entry.fields), 1)
+        self.assertEqual(len(entry.fields), 2)
 
 
 if __name__ == "__main__":
