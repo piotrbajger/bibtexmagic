@@ -9,7 +9,8 @@ class BibTexParserOptions():
 
     def __init__(self,
                  pages_double_hyphened,
-                 latex_to_unicode):
+                 latex_to_unicode,
+                 ignore_unsupported=True):
         """Init the option file.
 
         Args:
@@ -21,6 +22,7 @@ class BibTexParserOptions():
         """
         self.pages_double_hyphened = pages_double_hyphened
         self.latex_to_unicode = latex_to_unicode
+        self.ignore_unsupported = ignore_unsupported
 
 
 class BibTexMagic():
@@ -35,6 +37,30 @@ class BibTexMagic():
 
     ALLOWED_ENTRIES = ['article', 'book']
     CONVERTER = LatexToUni()
+
+    ALLOWED_FIELDS = {
+        'article': {
+            'required': ['author', 'title', 'journal', 'year'],
+            'optional': ['volume', 'number', 'pages', 'month']
+        },
+        'book': {
+            'required': [['author', 'editor'], 'title', 'publisher', 'year'],
+            'optional': [['volume', 'number'], 'series', 'address', 'edition',
+                         'month']
+        }
+    }
+
+    @staticmethod
+    def get_fields_for_entry(entry_type, optional=False):
+        """Returns a list of fields allowed for a given entry."""
+        if entry_type not in BibTexMagic.ALLOWED_ENTRIES:
+            raise ValueError(f"Entry type {entry_type} is not supported.")
+
+        if optional:
+            return (BibTexMagic.ALLOWED_FIELDS[entry_type]['required'] +
+                    BibTexMagic.ALLOWED_FIELDS[entry_type]['optional'])
+        else:
+            return BibTexMagic.ALLOWED_FIELDS[entry_type]['required']
 
     @staticmethod
     def latex_to_unicode(text):
@@ -86,18 +112,25 @@ class BibTexMagic():
         self.options = BibTexParserOptions(pages_double_hyphened,
                                            latex_to_unicode)
 
-    def parse_bib(self, filename):
+    def parse_bib(self, filename_or_buffer):
         """
         Parses a BibTeX file. Parsed file is then available
         in the 'entries' member variable.
 
         Args:
-            filename (str): Name of the file to be parsed.
+            filename_or_buffer: Name of the file to be parsed or a buffer.
 
         """
-
-        with open(filename) as bibfile:
-            bib_raw = bibfile.read()
+        if type(filename_or_buffer) == str:
+            with open(filename) as bibfile:
+                bib_raw = bibfile.read()
+        else:
+            try:
+                bib_raw = filename_or_buffer.read()
+                bib_raw = bib_raw.decode()
+            except AttributeError:
+                raise ValueError("Need to provide a string (filename) " +
+                                 "or a file buffer!")
 
         entries_unparsed = bib_raw.split("@")
 

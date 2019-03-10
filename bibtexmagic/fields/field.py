@@ -37,7 +37,8 @@ class BibTexField():
             UserWarning if field is not allowed.
 
         """
-        if field_name not in BibTexField._ALLOWED_FIELDS:
+        if (field_name not in BibTexField._ALLOWED_FIELDS) \
+            and not parser_options.ignore_unsupported:
             raise UserWarning("Field {} not supported.".format(field_name))
             return None
 

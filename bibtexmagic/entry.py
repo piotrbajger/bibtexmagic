@@ -23,7 +23,7 @@ class BibTexEntry():
 
         if entry_raw is not None:
             self.parse_entry(entry_raw, parser_options)
-
+    
     def parse_entry(self, entry_raw, parser_options):
         """
         Does the actual parsing and fills in the 'fields' member variable.
@@ -67,6 +67,15 @@ class BibTexEntry():
             if field is not None:
                 self.fields.append(field)
 
+    def to_dict(self):
+        """Returns the entry as Python dictionary"""
+        ret_dict = {}
+        
+        for f in self.fields:
+            ret_dict[f.name] = f.value
+        
+        return ret_dict
+        
     def to_json(self):
         """Returns the entry as a JSON string."""
         jsoned = "\t\"{}\": {{\n".format(self.key)
