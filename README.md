@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/piotrbajger/bibtexmagic/badges/master/pipeline.svg)](https://gitlab.com/piotrbajger/bibtexmagic/commits/master)
+[![Build Status](https://travis-ci.com/piotrbajger/bibtexmagic.svg?branch=master)](https://travis-ci.com/piotrbajger/bibtexmagic)
 [![Documentation Status](https://readthedocs.org/projects/bibtexmagic/badge/?version=latest)](https://bibtexmagic.readthedocs.io/en/latest/?badge=latest)
 
 # BibTeXMagic
@@ -32,7 +32,7 @@ from bibtexmagic.bibtexmagic import BibTexMagic
 parser = BibTexMagic() # Define the parser with the default options
 parser.parse_bib("bibliography.bib") # Parse the bibliography file
 ```
-You can then use the conversion functions to return the bibliography in a prefered format, e.g.: 
+You can then use the conversion functions to return the bibliography in a prefered format, e.g.:
 ```
 parser.to_json() # Prints the bibliography file in the JSON format.
 ```
