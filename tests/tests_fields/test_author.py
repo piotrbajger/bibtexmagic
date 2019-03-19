@@ -1,24 +1,18 @@
 import unittest
 
 from bibtexmagic.bibtexmagic.fields import author, field
-from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
 
 
 class TestTitleField(unittest.TestCase):
-    def setUp(self):
-        self.parser_options = BibTexParserOptions(
-            pages_double_hyphened=False,
-            latex_to_unicode=False)
-
     def test_create_field(self):
         f1 = field.BibTexField.create_field(
-                "author", "Test McFace", self.parser_options)
+                "author", "Test McFace")
 
         # Tests correct type
         self.assertTrue(isinstance(f1, author.AuthorBibTexField))
 
     def test_parse_author_name(self):
-        testauth = author.AuthorBibTexField("test test", self.parser_options)
+        testauth = author.AuthorBibTexField("test test")
 
         raw = [
             "Tom Waits",
@@ -48,21 +42,13 @@ class TestTitleField(unittest.TestCase):
 
         # Should not parse unicode
         f = field.BibTexField.create_field(
-            "author", raw, self.parser_options)
-
-        self.assertEqual(f.value, parsed_no_uni)
-
-        # Now should start parsing unicode
-        self.parser_options.latex_to_unicode = True
-
-        f = field.BibTexField.create_field(
-            "author", raw, self.parser_options)
+            "author", raw)
 
         self.assertEqual(f.value, parsed_uni)
 
     def test_parse_field_multiple(self):
         authors = ' and '.join(['a', 'b', 'c', 'd'])
 
-        f = author.AuthorBibTexField(authors, self.parser_options)
+        f = author.AuthorBibTexField(authors)
 
         self.assertEqual(len(f.value), 4)

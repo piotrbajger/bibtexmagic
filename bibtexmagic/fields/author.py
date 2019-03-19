@@ -5,18 +5,17 @@ from ..bibtexmagic import BibTexMagic
 class AuthorBibTexField(BibTexField):
     """Class representing the Author field."""
 
-    def __init__(self, field_raw, parser_options):
+    def __init__(self, field_raw):
         """Initialises and parses the field.
 
         Args:
             field_raw (str): Raw BibTex string as seen in a BibTeX file.
-            parser_options: An instance of BibTexParserOptions.
 
         """
         self.name = "author"
-        self.value = self.parse_field(field_raw, parser_options)
+        self.value = self.parse_field(field_raw)
 
-    def parse_field(self, field_raw, parser_options):
+    def parse_field(self, field_raw):
         """Parses the field.
 
         Accepts a string containing author names. Names are assumed to be
@@ -26,14 +25,12 @@ class AuthorBibTexField(BibTexField):
 
         Args:
             field_raw (str): Raw BibTex string as seen in a BibTeX file.
-            parser_options: An instance of BibTexParserOptions.
 
         Returns:
             list: A list of triplets of the form (von Last, Jr, First).
 
         """
-        if parser_options.latex_to_unicode:
-            field_raw = BibTexMagic.latex_to_unicode(field_raw)
+        field_raw = BibTexMagic.latex_to_unicode(field_raw)
 
         author_list = field_raw.split(" and ")
 
@@ -105,13 +102,20 @@ class AuthorBibTexField(BibTexField):
     def to_bibtex(self):
         """Returns the author field as a BibTeX string."""
         bibtexed = "author = {"
-        for author in self.value:
-            if author[1] != "":
-                bibtexed += "{}, {}, {} and ".format(*author)
-            else:
-                bibtexed += "{}, {} and ".format(author[0], author[2])
-
-        # Remove trailing ' and '.
-        bibtexed = bibtexed[:-5] + "}"
+        bibtexed += " and ".join(
+            [self._list_to_name(auth) for auth in self.value])
+        bibtexed += "}"
 
         return bibtexed
+
+    def _list_to_name(self, name_list):
+        """Converts a list to a name."""
+        if name_list[1] != "":
+            return "{}, {}, {}".format(*name_list)
+        else:
+            return "{}, {}".format(name_list[0], name_list[2])
+
+    def to_string(self):
+        """Returns the author field as an "and, "-separated string."""
+        return " and ".join(
+            [self._list_to_name(auth) for auth in self.value])

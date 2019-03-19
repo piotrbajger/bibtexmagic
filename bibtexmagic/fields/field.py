@@ -1,4 +1,5 @@
 from importlib import import_module
+import logging
 
 
 class BibTexField():
@@ -19,7 +20,7 @@ class BibTexField():
     ]
 
     @staticmethod
-    def create_field(field_name, field_raw, parser_options):
+    def create_field(field_name, field_raw):
         """BibTexField factory.
 
         Parses raw field text and creates an appropriate object.
@@ -27,7 +28,6 @@ class BibTexField():
         Args:
             field_name (str): Name of the field (e.g. Author or Journal)
             field_raw (str): An unparsed string containing the field value.
-            parser_options: An instance of BibTexParserOptions.
 
         Returns:
             (BibTexField): A concrete instance derived from BibTexField
@@ -37,28 +37,28 @@ class BibTexField():
             UserWarning if field is not allowed.
 
         """
-        if (field_name not in BibTexField._ALLOWED_FIELDS) \
-            and not parser_options.ignore_unsupported:
-            raise UserWarning("Field {} not supported.".format(field_name))
+        field_name = field_name.lower()
+        if (field_name not in BibTexField._ALLOWED_FIELDS):
+            raise UserWarning(f"Field {field_name} not supported.")
             return None
-
         field = None
         class_name = field_name.capitalize() + 'BibTexField'
 
         try:
-            field_module = import_module(
-                '.bibtexmagic.fields.' + field_name.lower(), 'bibtexmagic')
+            # field_module = import_module(
+            #     field_name)
+            logging.debug(f"Attempting to import {field_name}.")
+            field_module = import_module(f".bibtexmagic.fields.{field_name}",
+                                         package="bibtexmagic")
+            logging.debug(f"Found field subclass for {field_name}.")
 
-            field = getattr(field_module, class_name)(field_raw,
-                                                      parser_options)
+            field = getattr(field_module, class_name)(field_raw)
+
         except ImportError:
-            if field_name.lower() in BibTexField._ALLOWED_FIELDS:
-                field = BibTexField(field_name, field_raw)
+            field = BibTexField(field_name, field_raw)
+            logging.debug(f"Creating generic field for {field_name}.")
 
-        if field is None:
-            return BibTexField(field_name, field_raw)
-        else:
-            return field
+        return field
 
     def __init__(self, field_name, field_raw):
         """Initialises the object.
@@ -80,3 +80,9 @@ class BibTexField():
 
     def to_bibtex(self):
         return "{} = {{{}}}".format(self.name, self.value)
+
+    def to_string(self):
+        return self.value
+
+    def __repr__(self):
+        return f"<{self.name}: {self.value}>"

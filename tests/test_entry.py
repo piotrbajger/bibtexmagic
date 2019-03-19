@@ -1,20 +1,15 @@
 import unittest
 
 from bibtexmagic.bibtexmagic.entry import BibTexEntry
-from bibtexmagic.bibtexmagic.bibtexmagic import BibTexParserOptions
 
 
 class TestEntry(unittest.TestCase):
     def setUp(self):
-        self.parser_options = BibTexParserOptions(
-            pages_double_hyphened=False,
-            latex_to_unicode=False)
-
         self.entry_type = "type"
         self.field_name1 = "title"
-        self.field_name2 = "unsupported"
+        self.field_name2 = "journal"
         self.field_val1 = "{VAL1}"
-        self.field_val2 = "val2"
+        self.field_val2 = "{val2}"
         self.entry_key = "key"
 
         self.test_entry = (
@@ -30,9 +25,9 @@ class TestEntry(unittest.TestCase):
                  entry_key=self.entry_key)
 
     def test_parse_entry(self):
-        entry = BibTexEntry(self.parser_options)
+        entry = BibTexEntry()
 
-        entry.parse_entry(self.test_entry, self.parser_options)
+        entry.parse_entry(self.test_entry)
 
         self.assertEqual(entry.key, self.entry_key)
         self.assertEqual(entry.entry_type, self.entry_type)

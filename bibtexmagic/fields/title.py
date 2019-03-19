@@ -6,18 +6,17 @@ from ..helper import get_parentheses
 class TitleBibTexField(BibTexField):
     """Initialises and parses the field."""
 
-    def __init__(self, field_raw, parser_options):
+    def __init__(self, field_raw):
         """Initialises and parses the field.
 
         Args:
             field_raw (str): Raw BibTex string as seen in a BibTeX file.
-            parser_options: An instance of BibTexParserOptions.
 
         """
         self.name = "title"
-        self.value = self.parse_field(field_raw, parser_options)
+        self.value = self.parse_field(field_raw)
 
-    def parse_field(self, field_raw, parser_options):
+    def parse_field(self, field_raw):
         """Parses the field.
 
         Respectes capital letters in {} brackets and parses LaTeX
@@ -45,7 +44,6 @@ class TitleBibTexField(BibTexField):
         to_return += field_raw[pos:].lower()
         to_return = to_return[0].upper() + to_return[1:]
 
-        if not parser_options.latex_to_unicode:
-            to_return = BibTexMagic.unicode_to_latex(to_return)
+        to_return = BibTexMagic.unicode_to_latex(to_return)
 
         return to_return

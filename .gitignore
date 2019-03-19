@@ -11,3 +11,5 @@ docs/*
 
 #Fixtures
 !tests/fixtures/*
+
+env/

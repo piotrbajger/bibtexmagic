@@ -1,28 +1,5 @@
-import warnings
-
 from .latextouni import LatexToUni
 from .entry import BibTexEntry
-
-
-class BibTexParserOptions():
-    """Stores common settings for the parser."""
-
-    def __init__(self,
-                 pages_double_hyphened,
-                 latex_to_unicode,
-                 ignore_unsupported=True):
-        """Init the option file.
-
-        Args:
-            pages_double_hyphenedi (bool): Whether to use '-' or '--'
-                in the 'pages' BibTex field.
-            latex_to_unicode (bool): Whether to convert LaTeX macros
-                to unicode when parsing certain BibTeX fields.
-
-        """
-        self.pages_double_hyphened = pages_double_hyphened
-        self.latex_to_unicode = latex_to_unicode
-        self.ignore_unsupported = ignore_unsupported
 
 
 class BibTexMagic():
@@ -93,24 +70,12 @@ class BibTexMagic():
 
         return BibTexMagic.CONVERTER.uni_to_lat(text)
 
-    def __init__(self,
-                 pages_double_hyphened=True,
-                 latex_to_unicode=True):
+    def __init__(self):
         """
-        Initialise a new parser with a set of options.
-
-        Args:
-            pages_double_hyphened (bool): If True, two hyphens are used to set
-                page numbers. If False, one is used instead. Default: True
-            latex_to_unicode(bool): If True, LaTeX macros are converted to
-                unicode characters (e.g. \'{o} becomes ó). If False, the macro
-                strings are retained as is. Default: True.
+        Initialise a new parser.
         """
 
         self.entries = []
-
-        self.options = BibTexParserOptions(pages_double_hyphened,
-                                           latex_to_unicode)
 
     def parse_bib(self, filename_or_buffer):
         """
@@ -134,35 +99,15 @@ class BibTexMagic():
 
         entries_unparsed = bib_raw.split("@")
 
-        warnings.simplefilter('always')
-
         for unparsed in entries_unparsed:
             # Ignore comments
             if unparsed[0] == "%":
                 continue
 
-            entry = BibTexEntry(self.options, unparsed)
+            entry = BibTexEntry(unparsed)
 
             if entry is not None:
                 self.entries.append(entry)
-
-    def to_json(self):
-        """Returns the Bibliography as a JSON string."""
-        jsoned = '{\"bibliography\": {\n'
-        for entry in self.entries:
-            jsoned += entry.to_json()
-
-        # Remove trailing comma
-        jsoned = jsoned[:-2] + "\n"
-
-        jsoned += r'}}'
-
-        if self.options.latex_to_unicode:
-            jsoned = self.latex_to_unicode(jsoned)
-        else:
-            jsoned = self.unicode_to_latex(jsoned)
-
-        return jsoned
 
     def to_bibtex(self):
         """Returns the bibliography as a BibTeX string."""
@@ -171,9 +116,6 @@ class BibTexMagic():
             bibtexed += "\n\n"
             bibtexed += entry.to_bibtex()
 
-        if self.options.latex_to_unicode:
-            bibtexed = self.latex_to_unicode(bibtexed)
-        else:
-            bibtexed = self.unicode_to_latex(bibtexed)
+        bibtexed = self.latex_to_unicode(bibtexed)
 
         return bibtexed

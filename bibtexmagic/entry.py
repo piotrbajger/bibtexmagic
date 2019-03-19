@@ -7,12 +7,11 @@ from .fields.field import BibTexField
 class BibTexEntry():
     """Internal class storing a single BibTeX entry like 'Article'."""
 
-    def __init__(self, parser_options, entry_raw=None):
+    def __init__(self, entry_raw=None):
         """
         Initialises an entry from BibTex string.
 
         Args:
-            parser_options: An instance of BibTexParserOptions.
             entry_raw (str): A BibTex string to be parsed.
         """
 
@@ -22,9 +21,9 @@ class BibTexEntry():
         self.fields = []
 
         if entry_raw is not None:
-            self.parse_entry(entry_raw, parser_options)
-    
-    def parse_entry(self, entry_raw, parser_options):
+            self.parse_entry(entry_raw)
+
+    def parse_entry(self, entry_raw):
         """
         Does the actual parsing and fills in the 'fields' member variable.
 
@@ -59,8 +58,7 @@ class BibTexEntry():
 
             field_raw = entry_raw[(field_val_start+1):field_val_end]
 
-            field = BibTexField.create_field(field_name, field_raw,
-                                             parser_options)
+            field = BibTexField.create_field(field_name, field_raw)
 
             prev_end = field_val_end
 
@@ -70,29 +68,11 @@ class BibTexEntry():
     def to_dict(self):
         """Returns the entry as Python dictionary"""
         ret_dict = {}
-        
+
         for f in self.fields:
-            ret_dict[f.name] = f.value
-        
+            ret_dict[f.name] = f.to_string()
+
         return ret_dict
-        
-    def to_json(self):
-        """Returns the entry as a JSON string."""
-        jsoned = "\t\"{}\": {{\n".format(self.key)
-        jsoned += '\t\t\"type\": \"{}\",\n'.format(self.entry_type)
-        jsoned += '\t\t\"fields\": {\n'
-
-        for field in self.fields:
-            jsoned += field.to_json()
-
-        # Remove trailing comma
-        jsoned = jsoned[:-2] + "\n"
-
-        jsoned += "\t\t}\n"
-
-        jsoned += "\t},\n"
-
-        return jsoned
 
     def to_bibtex(self):
         """Returns the entry as a BibTeX string."""
